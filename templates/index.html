@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h4>Dashboard</h4>
+        </div>
+        <div class="col-md-4 text-end">
+            <span class="badge bg-danger p-2">Active SEV1: {{ sev1_count }}</span>
+        </div>
+    </div>
+
+    <form class="d-flex mb-4" method="GET" action="/">
+        <input class="form-control me-2" type="search" name="search" placeholder="Search Service or ID">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+
+    <table class="table table-bordered table-striped bg-white">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Service</th>
+                <th>Severity</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inc in incidents %}
+            <tr>
+                <td>{{ inc.custom_id }}</td>
+                <td>{{ inc.service }}</td>
+                <td>
+                    <span class="badge 
+                        {% if inc.severity == 'SEV1' %}bg-danger
+                        {% elif inc.severity == 'SEV2' %}bg-warning
+                        {% else %}bg-info{% endif %}">
+                        {{ inc.severity }}
+                    </span>
+                </td>
+                <td>{{ inc.status }}</td>
+                <td>{{ inc.created_at }}</td>
+                <td>
+                    <a href="/edit/{{ inc.id }}" class="btn btn-sm btn-primary">Manage</a>
+                    
+                    {% if inc.status == 'Resolved' %}
+                    <form action="/delete/{{ inc.id }}" method="POST" style="display:inline;">
+                        <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete permanently?')">Delete</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center">No incidents found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

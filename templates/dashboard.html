@@ -1,0 +1,112 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="mb-8 flex justify-between items-end">
+    <div>
+        <h2 class="text-3xl font-bold text-gray-800">Command Center</h2>
+        <p class="text-gray-500 mt-1">Real-time system overview</p>
+    </div>
+    <a href="/create" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow-md transition-all flex items-center">
+        <i class="fa-solid fa-bolt mr-2"></i> Declare Incident
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center">
+        <div class="p-3 rounded-full bg-blue-50 text-blue-600 mr-4">
+            <i class="fa-solid fa-database text-2xl"></i>
+        </div>
+        <div>
+            <p class="text-sm text-gray-500 uppercase font-semibold">Total Incidents</p>
+            <p class="text-3xl font-bold text-gray-800">{{ total }}</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center">
+        <div class="p-3 rounded-full {% if active_sev1 > 0 %}bg-red-50 text-red-600{% else %}bg-green-50 text-green-600{% endif %} mr-4">
+            <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+        </div>
+        <div>
+            <p class="text-sm text-gray-500 uppercase font-semibold">Active Critical (SEV1)</p>
+            <p class="text-3xl font-bold {% if active_sev1 > 0 %}text-red-600{% else %}text-green-600{% endif %}">
+                {{ active_sev1 }}
+            </p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center">
+        <div class="p-3 rounded-full bg-purple-50 text-purple-600 mr-4">
+            <i class="fa-solid fa-heart-pulse text-2xl"></i>
+        </div>
+        <div>
+            <p class="text-sm text-gray-500 uppercase font-semibold">System Health</p>
+            <p class="text-lg font-bold text-gray-800">
+                {% if active_sev1 > 0 %} Unstable {% else %} Operational {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <h3 class="text-lg font-bold text-gray-700 mb-4">Incidents by Severity</h3>
+        <div class="h-64">
+            <canvas id="sevChart"></canvas>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <h3 class="text-lg font-bold text-gray-700 mb-4">Status Breakdown</h3>
+        <div class="h-64">
+            <canvas id="statChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="font-bold text-gray-700">Recent Activity</h3>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                    <th class="px-6 py-3">ID</th>
+                    <th class="px-6 py-3">Service</th>
+                    <th class="px-6 py-3">Severity</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3 text-right">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for inc in recents %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 font-mono text-sm text-gray-600">{{ inc.custom_id }}</td>
+                    <td class="px-6 py-4 font-medium text-gray-800">{{ inc.service }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full font-bold
+                            {% if inc.severity == 'SEV1' %} bg-red-100 text-red-700
+                            {% elif inc.severity == 'SEV2' %} bg-orange-100 text-orange-700
+                            {% else %} bg-blue-100 text-blue-700 {% endif %}">
+                            {{ inc.severity }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">{{ inc.status }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="/edit/{{ inc.id }}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Config for Charts
+    const sevData = { labels: {{ sev_labels|safe }}, datasets: [{ data: {{ sev_values|safe }}, backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6'] }] };
+    const statData = { labels: {{ stat_labels|safe }}, datasets: [{ label: 'Count', data: {{ stat_values|safe }}, backgroundColor: '#10b981' }] };
+
+    new Chart(document.getElementById('sevChart'), { type: 'doughnut', data: sevData, options: { maintainAspectRatio: false } });
+    new Chart(document.getElementById('statChart'), { type: 'bar', data: statData, options: { maintainAspectRatio: false, scales: {y: {beginAtZero: true}} } });
+</script>
+{% endblock %}
