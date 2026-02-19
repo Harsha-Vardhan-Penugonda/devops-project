@@ -7,13 +7,14 @@ import csv
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
 
-
 db_config = {
-    'host': 'localhost',
-    'user': 'incident_user',
-    'password': 'password123',
-    'database': 'incident_db'
+    'host': 'serverless-europe-west3.sysp0000.db2.skysql.com',
+    'user': 'dbpgf38237478',
+    'password': ':x9ywtb734M%jK)Hb2vWz',
+    'database': 'incident_db',
+    'port': 4040
 }
+
 
 def get_db_connection():
     return mysql.connector.connect(**db_config)
