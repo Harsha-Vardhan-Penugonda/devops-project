@@ -35,9 +35,31 @@ If you skip this, the app still works: new incidents use only service, severity,
   python app.py
   ```
 
-If GEMINI_API_KEY is not set  if that’s not set,  If GEMINI_API_KEY is not set, incidents are still created but AI analysis will not be generated.
+If `GEMINI_API_KEY` is not set, incidents are still created but AI analysis will not be generated.
 
-**Optional – Groq (free but region-restricted):** If you’re in a supported region, you can set `GEMINI_API_KEY` instead of or in addition to `HF_TOKEN`. 
+**EC2 or production server (key not in GitHub):**  
+Set the key only on the server so the app can call Gemini:
+
+1. **Option A – `.env` file on the server (recommended)**  
+   In the app directory on EC2 (same folder as `app.py`), create a file named `.env` with one line:
+   ```bash
+   GEMINI_API_KEY=your-actual-gemini-api-key
+   ```
+   The app loads this file at startup (`.env` is in `.gitignore`, so it is never committed). Then restart the app (e.g. `sudo systemctl restart your-app-service` or restart gunicorn).
+
+2. **Option B – Environment variable in systemd**  
+   If you run the app with systemd, edit the service file and add:
+   ```ini
+   [Service]
+   Environment="GEMINI_API_KEY=your-actual-gemini-api-key"
+   ```
+   Reload and restart: `sudo systemctl daemon-reload && sudo systemctl restart your-app-service`.
+
+3. **Option C – Export before running**  
+   If you start the app manually: `export GEMINI_API_KEY=your-actual-gemini-api-key` in the same shell before `python app.py` or `gunicorn ...`.
+
+**Optional – Groq (free but region-restricted):** If you’re in a supported region, you can set `GEMINI_API_KEY` instead of or in addition to `HF_TOKEN`.
+
 ## 3. Install dependencies
 
 ```bash

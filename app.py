@@ -7,6 +7,15 @@ import os
 import warnings
 import markdown
 
+# Load .env from project directory if present (e.g. on EC2; file is not in git)
+try:
+    from dotenv import load_dotenv
+    _env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if os.path.isfile(_env_path):
+        load_dotenv(_env_path)
+except ImportError:
+    pass
+
 # Suppress Google lib FutureWarnings about Python 3.8 (so you can see Gemini success/failure clearly)
 warnings.filterwarnings("ignore", category=FutureWarning, module="google.")
 # new commit after k8
