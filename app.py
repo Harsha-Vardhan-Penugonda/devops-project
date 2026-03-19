@@ -37,11 +37,11 @@ def markdown_filter(s):
     return Markup(markdown.markdown(s, extensions=['nl2br']))
 
 db_config = {
-    'host': 'serverless-europe-west3.sysp0000.db2.skysql.com',
-    'user': 'dbpgf38237478',
-    'password': ':x9ywtb734M%jK)Hb2vWz',
-    'database': 'incident_db',
-    'port': 4040
+    'host': os.environ.get('DB_HOST'),
+    'user': os.environ.get('DB_USER'),
+    'password': os.environ.get('DB_PASSWORD'),
+    'database': os.environ.get('DB_NAME', 'incident_db'),
+    'port': int(os.environ.get('DB_PORT', 4040))
 }
 
 
