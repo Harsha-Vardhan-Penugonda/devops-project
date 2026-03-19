@@ -1,9 +1,0 @@
-version: '3.8'
-
-services:
-  flask-app:
-    image: anishawalgaonkar/incidents-app:v1
-    container_name: incident-management-system
-    ports:
-      - "80:5000"
-    restart: always
