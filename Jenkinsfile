@@ -38,7 +38,7 @@ pipeline {
                     docker run -d \
                         --name ${CONTAINER_NAME} \
                         -p 5000:5000 \
-                        --env-file /home/ubuntu/devops-project/.env \
+                        --env-file /var/lib/jenkins/.env  \
                         ${IMAGE_NAME}
                 '''
             }
