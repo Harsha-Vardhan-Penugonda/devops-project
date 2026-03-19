@@ -25,7 +25,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running import check...'
-                sh 'docker run --rm ${IMAGE_NAME} python -c "import app";'
+                sh 'docker run --rm ${IMAGE_NAME} python -c "import app"'
             }
         }
 

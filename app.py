@@ -15,7 +15,7 @@ try:
         load_dotenv(_env_path)
 except ImportError:
     pass
-
+#harsha commit
 # Suppress Google lib FutureWarnings about Python 3.8 (so you can see Gemini success/failure clearly)
 warnings.filterwarnings("ignore", category=FutureWarning, module="google.")
 # new commit after k8
