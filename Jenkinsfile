@@ -23,11 +23,11 @@ pipeline {
         }
 
         stage('Test') {
-            steps {
-                echo 'Running import check...'
-                sh 'docker run --rm ${IMAGE_NAME} python -c "import app; print(\"App imports OK\")"'
-            }
-        }
+    steps {
+        echo 'Running import check...'
+        sh 'docker run --rm ${IMAGE_NAME} python -c "import app"'
+    }
+}
 
         stage('Deploy') {
             steps {
